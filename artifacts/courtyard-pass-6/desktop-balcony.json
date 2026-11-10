@@ -1,0 +1,51 @@
+{
+  "url": "http://127.0.0.1:5188",
+  "mode": "desktop",
+  "state": "balcony",
+  "requestedState": "balcony",
+  "appliedState": "balcony",
+  "runId": "courtyard-pass-6",
+  "seed": 42,
+  "screenshotPath": "artifacts/courtyard-pass-6/desktop-balcony.png",
+  "gpu": {
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Vega 8 Graphics (0x000015D8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (AMD)",
+    "softwareRendered": false
+  },
+  "result": {
+    "ok": true,
+    "reason": "nonblank",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 720
+    },
+    "drawingBuffer": {
+      "width": 1280,
+      "height": 720
+    },
+    "alphaPixels": 4096,
+    "variance": 242,
+    "colorBuckets": 219,
+    "metrics": {
+      "colorBuckets": 265,
+      "colorEntropyBits": 6.57,
+      "edgeDensity": 0.441,
+      "luminance": {
+        "mean": 98.1,
+        "p5": 5.4,
+        "p95": 187.8,
+        "contrast": 182.5
+      },
+      "dominantColorShare": 0.072,
+      "nonBackgroundShare": 0.928
+    },
+    "renderBudget": null,
+    "diagnostics": null
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "consoleErrorCount": 0,
+  "pageErrorCount": 0
+}

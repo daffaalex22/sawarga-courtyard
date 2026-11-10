@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#17110d" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta
+      name="description"
+      content="Sawarga Courtyard at Summarecon Mall Bandung — a real-time architectural walkthrough."
+    />
+    <title>Sawarga Courtyard — Summarecon Mall Bandung</title>
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Interactive 3D view of Sawarga Courtyard"></canvas>
+
+    <div id="loading" class="loading" role="status" aria-live="polite">
+      <div class="loading__glow"></div>
+      <div class="loading__inner">
+        <p class="loading__eyebrow">Summarecon Mall Bandung</p>
+        <h1 class="loading__title">Sawarga<br /><em>Courtyard</em></h1>
+        <div class="loading__rule"></div>
+        <div class="loading__track"><span id="loading-progress"></span></div>
+        <p class="loading__status" id="loading-status">Preparing the courtyard</p>
+      </div>
+    </div>
+
+    <header class="topbar" id="topbar">
+      <div class="brand">
+        <p class="brand__eyebrow">Summarecon Mall Bandung</p>
+        <p class="brand__title">Sawarga Courtyard</p>
+      </div>
+
+      <div class="toolbar" role="toolbar" aria-label="Viewer controls">
+        <button id="btn-time" class="icon-btn" type="button" aria-label="Switch to day" title="Day / sunset">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.1" />
+            <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" />
+          </svg>
+        </button>
+        <button id="btn-quality" class="icon-btn" type="button" aria-label="Graphics quality" title="Graphics quality">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h10M18 7h2M4 12h4M12 12h8M4 17h10M18 17h2" />
+            <circle cx="16" cy="7" r="1.7" />
+            <circle cx="10" cy="12" r="1.7" />
+            <circle cx="16" cy="17" r="1.7" />
+          </svg>
+        </button>
+        <button id="btn-fullscreen" class="icon-btn" type="button" aria-label="Fullscreen" title="Fullscreen">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5" />
+          </svg>
+        </button>
+        <button id="btn-reset" class="icon-btn" type="button" aria-label="Reset view" title="Reset view">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.5 9.5A8 8 0 1 1 4 14" />
+            <path d="M4.5 4.5v5h5" />
+          </svg>
+        </button>
+        <button id="btn-help" class="icon-btn" type="button" aria-label="Help" title="Help">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="M9.6 9.3a2.6 2.6 0 0 1 5.1.8c0 1.8-2.7 2-2.7 3.7" />
+            <circle cx="12" cy="17.1" r="0.9" fill="currentColor" stroke="none" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="presets" id="presets" role="group" aria-label="Camera presets">
+      <button class="preset" type="button" data-preset="plaza" aria-pressed="true">Plaza</button>
+      <button class="preset" type="button" data-preset="balcony" aria-pressed="false">Balcony</button>
+      <button class="preset" type="button" data-preset="overview" aria-pressed="false">Overview</button>
+    </div>
+
+    <div class="hint" id="desktop-hint">
+      <span><kbd>Click</kbd> look</span>
+      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move</span>
+      <span><kbd>F</kbd> fly</span>
+      <span><kbd>O</kbd> orbit</span>
+      <span><kbd>H</kbd> help</span>
+    </div>
+
+    <div class="mobile-controls" id="mobile-controls" hidden>
+      <div class="joystick" id="joystick" aria-hidden="true">
+        <div class="joystick__knob" id="joystick-knob"></div>
+      </div>
+      <div class="mobile-actions">
+        <button id="btn-fly" class="mobile-pill" type="button" aria-pressed="false">Fly</button>
+        <button id="btn-up" class="mobile-pill mobile-pill--round" type="button" aria-label="Move up">↑</button>
+        <button id="btn-down" class="mobile-pill mobile-pill--round" type="button" aria-label="Move down">↓</button>
+      </div>
+      <p class="mobile-hint" id="mobile-hint">Left side: move · Right side: look</p>
+    </div>
+
+    <div class="quality-menu popover" id="quality-menu" hidden>
+      <p class="popover__title">Graphics</p>
+      <div class="quality-options" id="quality-options">
+        <button type="button" data-quality="auto">Auto</button>
+        <button type="button" data-quality="low">Low</button>
+        <button type="button" data-quality="medium">Medium</button>
+        <button type="button" data-quality="high">High</button>
+      </div>
+      <p class="popover__note">Auto adapts to your device.</p>
+    </div>
+
+    <div class="modal" id="help-modal" hidden>
+      <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <button class="modal__close" id="btn-help-close" type="button" aria-label="Close help">×</button>
+        <p class="modal__eyebrow">Architectural walkthrough</p>
+        <h2 class="modal__title" id="help-title">Sawarga Courtyard</h2>
+        <p class="modal__lede">
+          A real-time reconstruction of the open-air courtyard at Summarecon Mall Bandung. The plaza is
+          intentionally left clean so the environment can be reused.
+        </p>
+        <div class="modal__grid">
+          <div>
+            <h3>Desktop</h3>
+            <ul>
+              <li><kbd>Click</kbd> lock the camera and look</li>
+              <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk</li>
+              <li><kbd>Shift</kbd> sprint</li>
+              <li><kbd>F</kbd> toggle fly mode</li>
+              <li><kbd>Space</kbd> / <kbd>Ctrl</kbd> up / down while flying</li>
+              <li><kbd>O</kbd> orbit mode · <kbd>R</kbd> reset</li>
+              <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> camera presets</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Mobile</h3>
+            <ul>
+              <li>Left side: drag to move</li>
+              <li>Right side: drag to look</li>
+              <li><strong>Fly</strong> toggles vertical movement</li>
+              <li>Use ↑ / ↓ while flying</li>
+              <li>Preset pills jump to viewpoints</li>
+            </ul>
+          </div>
+        </div>
+        <p class="modal__credits">
+          Environment textures and HDRIs from Poly Haven (CC0). Built with Three.js. Summarecon name and
+          marks belong to their respective owners.
+        </p>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+
+    <div class="debug" id="debug" hidden>
+      <span id="debug-fps">-- fps</span>
+      <span id="debug-calls">-- calls</span>
+      <span id="debug-tris">-- tris</span>
+      <span id="debug-quality">--</span>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

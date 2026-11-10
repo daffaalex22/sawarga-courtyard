@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "runId": "courtyard-pass-6",
+  "captures": [
+    {
+      "mode": "desktop",
+      "state": "plaza",
+      "report": "artifacts/courtyard-pass-6/desktop-plaza.json"
+    },
+    {
+      "mode": "desktop",
+      "state": "balcony",
+      "report": "artifacts/courtyard-pass-6/desktop-balcony.json"
+    },
+    {
+      "mode": "desktop",
+      "state": "overview",
+      "report": "artifacts/courtyard-pass-6/desktop-overview.json"
+    },
+    {
+      "mode": "desktop",
+      "state": "day-plaza",
+      "report": "artifacts/courtyard-pass-6/desktop-day-plaza.json"
+    },
+    {
+      "mode": "mobile",
+      "state": "plaza",
+      "report": "artifacts/courtyard-pass-6/mobile-plaza.json"
+    },
+    {
+      "mode": "mobile",
+      "state": "overview",
+      "report": "artifacts/courtyard-pass-6/mobile-overview.json"
+    }
+  ],
+  "artifacts": [
+    "public/assets/hdri/belfast_sunset_puresky_2k.hdr",
+    "public/assets/hdri/kloppenheim_06_puresky_2k.hdr",
+    "public/assets/textures/red_brick/red_brick_diff_2k.jpg"
+  ]
+}
+
+
+
+
+
