@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "scientific-visualization": {
+      "source": "k-dense-ai/scientific-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/scientific-visualization/SKILL.md",
+      "computedHash": "5477b78120e75a65aed0f6e15dbf71b8669cca9160c2036847fd7bb45a3344c1"
+    }
+  }
+}
