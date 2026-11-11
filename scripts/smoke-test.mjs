@@ -42,6 +42,22 @@ await page.click('#btn-quality');
 await page.click('[data-quality="auto"]');
 await page.waitForTimeout(300);
 
+// Event layout and overlay.
+const layoutOn = await page.evaluate(() => window.__COURTYARD__.app.eventProxies.visible);
+await page.click('#btn-layout');
+const layoutOff = await page.evaluate(() => window.__COURTYARD__.app.eventProxies.visible);
+check('layout button hides event proxies', layoutOn === true && layoutOff === false);
+await page.click('#btn-layout');
+await page.waitForTimeout(250);
+const layoutBackOn = await page.evaluate(() => window.__COURTYARD__.app.eventProxies.visible);
+check('layout button restores event proxies', layoutBackOn === true);
+await page.keyboard.press('l');
+const overlayOn = await page.evaluate(() => window.__COURTYARD__.app.layoutOverlay.visible);
+check('L shows layout overlay', overlayOn === true);
+await page.keyboard.press('l');
+const overlayOff = await page.evaluate(() => window.__COURTYARD__.app.layoutOverlay.visible);
+check('L hides layout overlay', overlayOff === false);
+
 // Time of day.
 const initialTime = await page.evaluate(() => window.__COURTYARD__.app.time);
 await page.click('#btn-time');
@@ -92,6 +108,21 @@ const mobileControlsVisible = await mobile.evaluate(
   () => !document.getElementById('mobile-controls')?.hidden,
 );
 check('mobile controls visible', mobileControlsVisible);
+
+const mobileLayoutBefore = await mobile.evaluate(
+  () => window.__COURTYARD__.app.eventProxies.visible,
+);
+await mobile.click('#btn-layout');
+await mobile.waitForTimeout(250);
+const mobileLayoutAfter = await mobile.evaluate(
+  () => window.__COURTYARD__.app.eventProxies.visible,
+);
+check(
+  'mobile layout button toggles event proxies',
+  mobileLayoutBefore === true && mobileLayoutAfter === false,
+);
+await mobile.click('#btn-layout');
+await mobile.waitForTimeout(250);
 
 await mobile.click('#btn-fly');
 const flyMode = await mobile.evaluate(() => window.__COURTYARD__.app.rig.currentMode);

@@ -7,6 +7,15 @@ import { buildFacades } from '../scene/facades';
 import { buildLandscape } from '../scene/landscape';
 import { buildContext } from '../scene/context';
 import { buildBranding } from '../scene/branding';
+import { buildCurvedBalconies } from '../scene/venue/balconies';
+import { buildEventProxies } from '../scene/venue/eventProxies';
+import { buildLayoutOverlay } from '../scene/venue/overlay';
+import {
+  BOARD_FOOTPRINT,
+  BOOTH_FOOTPRINT,
+  VENUE_SEAT_COUNT,
+  VENUE_WORLD,
+} from '../scene/venue/layout';
 import { CollisionWorld } from '../controls/CollisionWorld';
 import { CameraRig } from '../controls/CameraRig';
 import { UI } from '../ui/UI';
@@ -53,6 +62,9 @@ export class App {
   private rig!: CameraRig;
   private collision!: CollisionWorld;
   private timer!: THREE.Timer;
+  private eventProxies!: THREE.Group;
+  private layoutOverlay!: THREE.Group;
+  private eventLayoutVisible = true;
 
   private quality: QualityLevel = 'auto';
   private effectiveQuality: EffectiveQuality = 'medium';
@@ -63,6 +75,7 @@ export class App {
 
   private frameAccumulator = 0;
   private frameCount = 0;
+  private introToastTimer: number | null = null;
   private debugAccumulator = 0;
   private debugFrames = 0;
   private fps = 0;
@@ -116,6 +129,7 @@ export class App {
       onFlyToggle: () => this.rig?.toggleFly(),
       onVertical: (value) => this.rig?.setTouchVertical(value),
       onHelp: () => undefined,
+      onLayoutToggle: () => this.toggleEventLayout(),
     });
     this.ui.setProgress(0.04, 'Loading sky and materials');
     this.ui.setQuality(this.quality);
@@ -147,7 +161,7 @@ export class App {
 
       const landscape = buildLandscape(this.materials, this.collision);
       this.scene.add(landscape.group);
-      this.ui.setProgress(0.9, 'Adding the skyline');
+      this.ui.setProgress(0.88, 'Adding the skyline');
 
       const context = buildContext(this.materials);
       this.scene.add(context);
@@ -156,7 +170,39 @@ export class App {
         this.collision.addCircle(column.x, column.z, column.radius);
       }
 
-      this.ui.setProgress(0.95, 'Preparing the light');
+      this.ui.setProgress(0.92, 'Building the ticketing balconies');
+      const balconies = buildCurvedBalconies(this.materials);
+      this.scene.add(balconies.group);
+      for (const support of balconies.collisions) {
+        this.collision.addCircle(support.x, support.z, support.radius);
+      }
+      this.collision.addBox(
+        VENUE_WORLD.stageObstacle.minX,
+        VENUE_WORLD.stageObstacle.maxX,
+        VENUE_WORLD.stageObstacle.minZ,
+        VENUE_WORLD.stageObstacle.maxZ,
+      );
+      this.collision.addBox(
+        BOARD_FOOTPRINT.minX,
+        BOARD_FOOTPRINT.maxX,
+        BOARD_FOOTPRINT.minZ,
+        BOARD_FOOTPRINT.maxZ,
+      );
+      this.collision.addBox(
+        BOOTH_FOOTPRINT.minX,
+        BOOTH_FOOTPRINT.maxX,
+        BOOTH_FOOTPRINT.minZ,
+        BOOTH_FOOTPRINT.maxZ,
+      );
+
+      this.ui.setProgress(0.95, 'Staging the event layout');
+      this.eventProxies = buildEventProxies(this.materials).group;
+      this.scene.add(this.eventProxies);
+      this.layoutOverlay = buildLayoutOverlay();
+      this.scene.add(this.layoutOverlay);
+      this.ui.setLayoutVisible(true);
+
+      this.ui.setProgress(0.97, 'Preparing the light');
       this.lighting.setQuality(this.effectiveQuality);
       this.lighting.setTimeOfDay(this.time, true);
       this.ui.setTime(this.time);
@@ -182,6 +228,13 @@ export class App {
       this.ui.setMode(this.rig.currentMode);
       this.ui.setPreset('plaza');
 
+      if (params.get('layout') === '1') this.setLayoutOverlay(true);
+      if (params.get('clean') === '1') {
+        this.eventLayoutVisible = false;
+        this.eventProxies.visible = false;
+        this.ui.setLayoutVisible(false);
+      }
+
       const initialState = params.get('state');
       if (initialState) await this.setState(initialState);
 
@@ -195,7 +248,8 @@ export class App {
       this.startLoop();
       window.addEventListener('resize', this.onResize);
       window.setTimeout(() => this.ui.hideLoading(), 650);
-      window.setTimeout(() => {
+      this.introToastTimer = window.setTimeout(() => {
+        this.introToastTimer = null;
         if (this.rig.touch) {
           this.ui.showToast('Left side to move · Right side to look', 3600);
         } else {
@@ -212,6 +266,7 @@ export class App {
         seed,
       };
       if (this.debugEnabled) this.ui.toggleDebug();
+      window.addEventListener('keydown', this.onLayoutHotkey);
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : 'Unable to load the courtyard';
@@ -280,6 +335,40 @@ export class App {
     this.rig?.setPausedForScreenshot(paused);
   }
 
+  setLayoutOverlay(visible: boolean): void {
+    if (this.layoutOverlay) this.layoutOverlay.visible = visible;
+  }
+
+  private onLayoutHotkey = (event: KeyboardEvent): void => {
+    const target = event.target as HTMLElement | null;
+    if (
+      target &&
+      (target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable ||
+        this.ui?.isHelpOpen)
+    ) {
+      return;
+    }
+    if (event.code !== 'KeyL') return;
+    event.preventDefault();
+    const visible = !this.layoutOverlay?.visible;
+    this.setLayoutOverlay(visible);
+    this.ui.showToast(visible ? 'Layout overlay on' : 'Layout overlay off');
+  };
+
+  private toggleEventLayout(): void {
+    if (!this.eventProxies) return;
+    this.eventLayoutVisible = !this.eventLayoutVisible;
+    this.eventProxies.visible = this.eventLayoutVisible;
+    this.ui.setLayoutVisible(this.eventLayoutVisible);
+    this.ui.showToast(
+      this.eventLayoutVisible
+        ? `Event layout on · ${VENUE_SEAT_COUNT} seats`
+        : 'Clean courtyard',
+    );
+  }
+
   private toggleTime(): void {
     this.time = this.time === 'sunset' ? 'day' : 'sunset';
     this.lighting.setTimeOfDay(this.time);
@@ -311,12 +400,24 @@ export class App {
 
   async setState(name: string): Promise<{ state: string }> {
     this.ui.hideLoadingNow();
+    if (this.introToastTimer !== null) {
+      window.clearTimeout(this.introToastTimer);
+      this.introToastTimer = null;
+    }
+    this.ui.hideToast();
     const parts = name.split('-');
+    const wantsLayout = parts.includes('layout');
+    this.setLayoutOverlay(wantsLayout);
     for (const part of parts) {
       if (part === 'day' || part === 'sunset') {
         this.time = part;
         this.lighting.setTimeOfDay(part, true);
         this.ui.setTime(part);
+      } else if (part === 'layout') {
+        this.eventLayoutVisible = true;
+        this.eventProxies.visible = true;
+        this.ui.setLayoutVisible(true);
+        this.rig.setPreset('overview', true);
       } else if (part === 'plaza' || part === 'balcony' || part === 'overview') {
         this.rig.setPreset(part as PresetName, true);
       }

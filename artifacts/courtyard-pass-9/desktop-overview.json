@@ -1,12 +1,12 @@
 {
   "url": "http://127.0.0.1:5188",
   "mode": "desktop",
-  "state": "day-plaza",
-  "requestedState": "day-plaza",
-  "appliedState": "day-plaza",
-  "runId": "courtyard-pass-6",
+  "state": "overview",
+  "requestedState": "overview",
+  "appliedState": "overview",
+  "runId": "courtyard-pass-9",
   "seed": 42,
-  "screenshotPath": "artifacts/courtyard-pass-6/desktop-day-plaza.png",
+  "screenshotPath": "artifacts/courtyard-pass-9/desktop-overview.png",
   "gpu": {
     "renderer": "ANGLE (AMD, AMD Radeon(TM) Vega 8 Graphics (0x000015D8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
     "vendor": "Google Inc. (AMD)",
@@ -26,20 +26,20 @@
       "height": 720
     },
     "alphaPixels": 4096,
-    "variance": 243,
-    "colorBuckets": 225,
+    "variance": 237,
+    "colorBuckets": 217,
     "metrics": {
-      "colorBuckets": 260,
-      "colorEntropyBits": 6.56,
-      "edgeDensity": 0.395,
+      "colorBuckets": 272,
+      "colorEntropyBits": 5.22,
+      "edgeDensity": 0.328,
       "luminance": {
-        "mean": 118,
-        "p5": 9.8,
-        "p95": 211.7,
-        "contrast": 201.9
+        "mean": 127.5,
+        "p5": 52.6,
+        "p95": 169.6,
+        "contrast": 117
       },
-      "dominantColorShare": 0.054,
-      "nonBackgroundShare": 0.946
+      "dominantColorShare": 0.272,
+      "nonBackgroundShare": 0.728
     },
     "renderBudget": null,
     "diagnostics": null

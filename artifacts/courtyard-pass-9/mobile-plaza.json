@@ -1,0 +1,51 @@
+{
+  "url": "http://127.0.0.1:5188",
+  "mode": "mobile",
+  "state": "plaza",
+  "requestedState": "plaza",
+  "appliedState": "plaza",
+  "runId": "courtyard-pass-9",
+  "seed": 42,
+  "screenshotPath": "artifacts/courtyard-pass-9/mobile-plaza.png",
+  "gpu": {
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Vega 8 Graphics (0x000015D8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (AMD)",
+    "softwareRendered": false
+  },
+  "result": {
+    "ok": true,
+    "reason": "nonblank",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 390,
+      "height": 664
+    },
+    "drawingBuffer": {
+      "width": 487,
+      "height": 830
+    },
+    "alphaPixels": 4111,
+    "variance": 250,
+    "colorBuckets": 296,
+    "metrics": {
+      "colorBuckets": 316,
+      "colorEntropyBits": 5.86,
+      "edgeDensity": 0.314,
+      "luminance": {
+        "mean": 93.1,
+        "p5": 13,
+        "p95": 181,
+        "contrast": 168
+      },
+      "dominantColorShare": 0.1,
+      "nonBackgroundShare": 0.9
+    },
+    "renderBudget": null,
+    "diagnostics": null
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "consoleErrorCount": 0,
+  "pageErrorCount": 0
+}

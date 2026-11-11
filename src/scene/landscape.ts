@@ -122,7 +122,7 @@ export function buildLandscape(
   const rng = makeRng(0x1a4d5c);
 
   // Planter positions around the perimeter, skipping the main gaps.
-  const planterAngles = [0.38, 0.63, 0.88, 1.02, 1.24, 1.5, 1.6, 1.92];
+  const planterAngles = [1.24, 1.5, 1.6];
   const planterRadius = 2.7;
   const batches = new GeometryBatch();
   const placements: Array<{ x: number; z: number; angle: number; variant: number; scale: number; rotation: number }> = [];
@@ -147,6 +147,36 @@ export function buildLandscape(
       angle,
       variant: placements.length % 2,
       scale: randRange(rng, 1.0, 1.28),
+      rotation: randRange(rng, 0, Math.PI * 2),
+    });
+  }
+
+  // Venue-side trees: between the floor seating and the shell-attached
+  // balconies. These replace the old perimeter planters that would have
+  // collided with the curved decks.
+  const venueTreePositions: Array<[number, number]> = [
+    [-20.5, -7], [-20.5, 1], [-20.5, 7],
+    [20.5, -7], [20.5, 1], [20.5, 7],
+  ];
+  const venuePlanterRadius = 2;
+  for (const [x, z] of venueTreePositions) {
+    const matrix = new THREE.Matrix4().compose(
+      new THREE.Vector3(x, 0, z),
+      new THREE.Quaternion(),
+      new THREE.Vector3(1, 1, 1),
+    );
+    batches.add('stone', new THREE.BoxGeometry(venuePlanterRadius * 2, 0.62, venuePlanterRadius * 2).translate(0, 0.31, 0), matrix);
+    batches.add('stone', new THREE.BoxGeometry(venuePlanterRadius * 2 + 0.24, 0.14, venuePlanterRadius * 2 + 0.24).translate(0, 0.67, 0), matrix);
+    batches.add('soil', new THREE.BoxGeometry(venuePlanterRadius * 2 - 0.3, 0.08, venuePlanterRadius * 2 - 0.3).translate(0, 0.68, 0), matrix);
+    collision.addCircle(x, z, venuePlanterRadius + 0.2);
+    placements.push({
+      x,
+      z,
+      angle: 0,
+      variant: placements.length % 2,
+      // Lower than the perimeter trees so the curved balconies keep a clear
+      // sightline to the stage.
+      scale: randRange(rng, 0.55, 0.72),
       rotation: randRange(rng, 0, Math.PI * 2),
     });
   }
@@ -277,14 +307,7 @@ export function buildLandscape(
   }
 
   // Benches along the plaza edge.
-  const benchData = [
-    { angle: 0.34, offset: 4.2 },
-    { angle: 0.58, offset: 4.6 },
-    { angle: 1.16, offset: 5.0 },
-    { angle: 1.74, offset: 4.6 },
-    { angle: 1.98, offset: 4.4 },
-    { angle: 2.1, offset: 5.2 },
-  ];
+  const benchData = [{ angle: 1.74, offset: 4.6 }];
   const benchGeometry = makeStoneBenchGeometry();
   const benchCount = benchData.length;
   const benches = new THREE.InstancedMesh(benchGeometry, materials.stone, benchCount);
@@ -307,7 +330,8 @@ export function buildLandscape(
   group.add(benches);
 
   // Slim light poles around the plaza.
-  const poleCount = 8;
+  const poleAngles = [1.75, 4.105];
+  const poleCount = poleAngles.length;
   const poleGeometry = new THREE.CylinderGeometry(0.06, 0.075, 3.7, 8);
   poleGeometry.translate(0, 1.85, 0);
   const poleMesh = new THREE.InstancedMesh(poleGeometry, materials.metal, poleCount);
@@ -320,7 +344,7 @@ export function buildLandscape(
   lanternMesh.receiveShadow = false;
   const poleDummy = new THREE.Object3D();
   for (let i = 0; i < poleCount; i += 1) {
-    const angle = (i / poleCount) * Math.PI * 2 + 0.18;
+    const angle = poleAngles[i];
     const point = ellipsePoint(WORLD.radiusX - 6.2, WORLD.radiusZ - 5.4, angle);
     poleDummy.position.set(point.x, 0, point.z);
     poleDummy.rotation.set(0, 0, 0);

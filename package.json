@@ -11,7 +11,8 @@
     "capture:states": "node scripts/capture-states.mjs",
     "capture:mobile": "node scripts/screenshot-mobile.mjs",
     "smoke": "node scripts/smoke-test.mjs",
-    "performance": "node scripts/performance.mjs"
+    "performance": "node scripts/performance.mjs",
+    "verify:venue": "node --experimental-strip-types scripts/verify-venue.ts"
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.2.8",

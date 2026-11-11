@@ -274,6 +274,11 @@ kbd {
   color: var(--cream);
 }
 
+.icon-btn[aria-pressed="true"] {
+  background: rgba(211, 154, 98, 0.2);
+  color: var(--accent-soft);
+}
+
 .icon-btn:active {
   transform: scale(0.94);
 }
@@ -699,7 +704,8 @@ kbd {
   }
 
   .brand__title {
-    font-size: 21px;
+    font-size: 19px;
+    white-space: nowrap;
   }
 
   .toolbar {
@@ -761,6 +767,26 @@ kbd {
     bottom: calc(142px + env(safe-area-inset-bottom));
     max-width: 82vw;
     text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .brand__title {
+    font-size: 18px;
+  }
+
+  .icon-btn {
+    width: 33px;
+    height: 33px;
+  }
+
+  .icon-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .toolbar {
+    padding: 3px;
   }
 }
 

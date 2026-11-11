@@ -8,6 +8,7 @@ export interface UICallbacks {
   onFlyToggle: () => void;
   onVertical: (value: number) => void;
   onHelp: () => void;
+  onLayoutToggle: () => void;
 }
 
 function byId<T extends HTMLElement>(id: string): T {
@@ -22,6 +23,7 @@ export class UI {
   private readonly loadingBar = byId<HTMLSpanElement>('loading-progress');
   private readonly loadingStatus = byId<HTMLParagraphElement>('loading-status');
   private readonly timeButton = byId<HTMLButtonElement>('btn-time');
+  private readonly layoutButton = byId<HTMLButtonElement>('btn-layout');
   private readonly qualityButton = byId<HTMLButtonElement>('btn-quality');
   private readonly fullscreenButton = byId<HTMLButtonElement>('btn-fullscreen');
   private readonly resetButton = byId<HTMLButtonElement>('btn-reset');
@@ -136,6 +138,15 @@ export class UI {
     document.body.classList.toggle('is-touch', visible);
   }
 
+  setLayoutVisible(visible: boolean): void {
+    this.layoutButton.setAttribute('aria-pressed', String(visible));
+    this.layoutButton.title = visible ? 'Hide event layout' : 'Show event layout';
+    this.layoutButton.setAttribute(
+      'aria-label',
+      visible ? 'Hide event layout' : 'Show event layout',
+    );
+  }
+
   showJoystick(visible: boolean, x: number, y: number, dx: number, dy: number): void {
     if (!visible) {
       this.joystick.classList.remove('is-active');
@@ -178,6 +189,13 @@ export class UI {
     }, duration);
   }
 
+  hideToast(): void {
+    if (this.toastTimer !== null) window.clearTimeout(this.toastTimer);
+    this.toastTimer = null;
+    this.toast.classList.remove('is-visible');
+    this.toast.hidden = true;
+  }
+
   openHelp(): void {
     this.helpOpen = true;
     this.helpModal.hidden = false;
@@ -193,6 +211,7 @@ export class UI {
 
   private wire(): void {
     this.timeButton.addEventListener('click', () => this.callbacks.onTimeToggle());
+    this.layoutButton.addEventListener('click', () => this.callbacks.onLayoutToggle());
     this.qualityButton.addEventListener('click', (event) => {
       event.stopPropagation();
       this.qualityMenu.hidden = !this.qualityMenu.hidden;

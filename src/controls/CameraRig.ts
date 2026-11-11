@@ -37,15 +37,15 @@ interface Preset {
 
 const PRESETS: Record<PresetName, Preset> = {
   plaza: {
-    feet: new THREE.Vector3(0, 0, 19.5),
+    feet: new THREE.Vector3(0, 0, 22.5),
     yaw: 0.06,
     pitch: -0.015,
     mode: 'walk',
   },
   balcony: {
-    feet: new THREE.Vector3(30.9, 5.2, 12.0),
-    yaw: 1.2,
-    pitch: -0.115,
+    feet: new THREE.Vector3(31, 5.2, 0),
+    yaw: 1.17,
+    pitch: -0.08,
     mode: 'fly',
   },
   overview: {

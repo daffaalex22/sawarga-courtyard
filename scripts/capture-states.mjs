@@ -12,8 +12,8 @@ page.on('console', (msg) => {
 });
 page.on('pageerror', (error) => console.log(`[pageerror] ${error.message}`));
 
-await page.goto(url, { waitUntil: 'networkidle' });
-await page.waitForFunction(() => Boolean(window.__COURTYARD__), null, { timeout: 30000 });
+await page.goto(url, { waitUntil: 'domcontentloaded' });
+await page.waitForFunction(() => Boolean(window.__COURTYARD__), null, { timeout: 60000 });
 await page.waitForTimeout(2500);
 for (const state of states) {
   await page.evaluate(async (name) => {
@@ -35,3 +35,4 @@ for (const state of states) {
   console.log(`captured ${state} -> ${path}`);
 }
 await browser.close();
+
